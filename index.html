@@ -322,56 +322,153 @@
 
     .nws-bold { font-weight: bold; }
 
-    /* ── Window 4: Terminal ─────────────────────────────────── */
+     /* ── Window 4: NASA FIRMS Fire Map ─────────────────────── */
 
-    #w-term {
+    #w-firms {
       bottom: 26px; left: 2%;
-      width: 40%; height: 30%;
+      width: 40%; height: 34%;
       z-index: 5;
-      background: #0a0a0a;
-      color: #00ff41;
-      border-color: #1a4a1a;
+      background: #0d0d12;
+      color: #ccc;
+      border-color: #2a2a3a;
     }
 
-    .term-chrome {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 10px;
-      background: #111;
-      border-bottom: 1px solid #1a4a1a;
-      flex-shrink: 0;
-    }
-
-    .term-title {
-      font-family: 'Courier New', monospace;
-      font-size: 9.5px;
-      color: #00cc33;
-      opacity: 0.7;
-    }
-
-    .term-body {
-      padding: 8px 10px;
-      font-family: 'Courier New', monospace;
-      font-size: 9.5px;
-      line-height: 1.6;
+    .firms-body {
+      padding: 0;
       overflow: hidden;
       flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
     }
 
-    .t-prompt  { color: #00ff41; }
-    .t-cmd     { color: #ffffff; }
-    .t-out     { color: #00cc33; opacity: 0.85; }
-    .t-err     { color: #ff4444; }
-    .t-warn    { color: #ffaa00; }
-    .t-dim     { color: #00ff41; opacity: 0.5; }
+    .firms-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: #1a1a28;
+      border-bottom: 1px solid #2a2a3a;
+      flex-shrink: 0;
+      font-size: 8.5px;
+      color: #888;
+    }
 
-    .t-cursor {
-      display: inline-block;
-      width: 6px; height: 11px;
-      background: #00ff41;
-      animation: cursor-blink 0.7s step-end infinite;
-      vertical-align: middle;
+    .firms-toolbar-btn {
+      background: #252535;
+      border: 1px solid #3a3a4a;
+      color: #aaa;
+      font-size: 8px;
+      padding: 1px 7px;
+      cursor: default;
+      border-radius: 2px;
+    }
+
+    .firms-toolbar-btn.active {
+      background: #e63946;
+      border-color: #e63946;
+      color: #fff;
+    }
+
+    .firms-map-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #101018;
+    }
+
+    /* Pseudo satellite map — dark land with grid lines */
+    .firms-map-area::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(ellipse 80% 60% at 45% 55%, #1a1f10 0%, #0d0d12 100%);
+      background-size: 30px 30px, 30px 30px, 100% 100%;
+    }
+
+    /* Water body (Sacramento Valley look) */
+    .firms-map-area::after {
+      content: '';
+      position: absolute;
+      left: 30%; top: 10%;
+      width: 6px; height: 70%;
+      background: #162940;
+      border-radius: 3px;
+      opacity: 0.6;
+    }
+
+    /* Fire hotspot dots */
+    .firms-dot {
+      position: absolute;
+      border-radius: 50%;
+      animation: alert-pulse 1.8s ease-in-out infinite;
+    }
+
+    .firms-dot.lg {
+      width: 14px; height: 14px;
+      background: radial-gradient(circle, #ff6b00 0%, #cc2200 60%, transparent 100%);
+      box-shadow: 0 0 8px 2px rgba(255, 80, 0, 0.5);
+    }
+
+    .firms-dot.md {
+      width: 9px; height: 9px;
+      background: radial-gradient(circle, #ff9933 0%, #cc3300 70%, transparent 100%);
+      box-shadow: 0 0 5px 1px rgba(255, 100, 0, 0.4);
+    }
+
+    .firms-dot.sm {
+      width: 6px; height: 6px;
+      background: radial-gradient(circle, #ffcc44 0%, #ff4400 80%, transparent 100%);
+      box-shadow: 0 0 3px 1px rgba(255, 140, 0, 0.3);
+    }
+
+    .firms-label {
+      position: absolute;
+      font-size: 7.5px;
+      font-family: Arial, sans-serif;
+      color: #ffcc77;
+      white-space: nowrap;
+      text-shadow: 0 0 4px #000;
+    }
+
+    .firms-perimeter {
+      position: absolute;
+      border: 1.5px solid rgba(255, 100, 0, 0.45);
+      border-radius: 40% 55% 50% 45%;
+      background: rgba(255, 60, 0, 0.07);
+    }
+
+    .firms-legend {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 8px;
+      background: #1a1a28;
+      border-top: 1px solid #2a2a3a;
+      flex-shrink: 0;
+      font-size: 8px;
+      color: #888;
+    }
+
+    .firms-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .firms-legend-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+
+    .firms-stat {
+      margin-left: auto;
+      color: #ff6633;
+      font-weight: bold;
+      font-size: 8.5px;
     }
 
     /* ── Window 5: Academic Paper ───────────────────────────── */
