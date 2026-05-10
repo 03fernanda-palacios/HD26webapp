@@ -53,7 +53,7 @@
       100% { transform: translateX(-100%); }
     }
 
-    /* ── Section 1: Date Screen ─────────────────────────────── */
+    /* ── Section 1: Title Card ──────────────────────────────── */
 
     #section-date {
       background: #000;
@@ -63,7 +63,14 @@
     }
 
     #date-display {
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    #date-line-1 {
+      display: flex;
       align-items: baseline;
     }
 
@@ -75,13 +82,14 @@
       text-transform: uppercase;
     }
 
-    #date-cursor {
+    #date-location {
       color: #fff;
-      font-size: clamp(2rem, 8vw, 10rem);
+      font-size: clamp(0.9rem, 2.5vw, 3rem);
       font-weight: 100;
-      animation: cursor-blink 0.8s step-end infinite;
-      margin-left: 0.06em;
-      line-height: 1;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      margin-top: 1.5rem;
+      min-height: 1em;
     }
 
     /* ── Section 2: Information Overload ────────────────────── */
@@ -89,7 +97,7 @@
     #section-grid {
       position: relative;
       overflow: hidden;
-      background: #050505;
+      background: #276548;
     }
 
     /* CRT scan-line overlay */
@@ -735,6 +743,185 @@
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
     }
+
+    /* ── Window 1: CAL FIRE Incidents ──────────────────────── */
+
+    #w-usda { background: #fff; }
+
+    .calfire-body { font-family: Arial, sans-serif; color: #111; }
+    .cf-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 4px 0 6px; border-bottom: 2px solid #f16522; margin-bottom: 5px;
+    }
+    .cf-logo {
+      background: #f16522; color: #fff; font-size: 8px; font-weight: 900;
+      letter-spacing: 0.1em; padding: 2px 6px; flex-shrink: 0;
+    }
+    .cf-subtitle { font-size: 10px; font-weight: bold; color: #222; }
+    .cf-time {
+      margin-left: auto; font-size: 8px; color: #888;
+      font-family: 'Courier New', monospace; white-space: nowrap;
+    }
+    .cf-summary { font-size: 9px; color: #555; margin-bottom: 6px; }
+    .cf-emerg { color: #c0392b; font-weight: bold; }
+    .calfire-table { width: 100%; border-collapse: collapse; font-size: 8.5px; }
+    .calfire-table th {
+      background: #f7f7f7; border-bottom: 2px solid #ddd; border-top: 1px solid #ddd;
+      padding: 3px 4px; text-align: left; font-size: 7.5px; color: #666;
+      letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+    }
+    .calfire-table td { padding: 3px 4px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .cf-fire-name { font-weight: bold; color: #b03020; }
+    .cf-pct { font-family: 'Courier New', monospace; }
+    .cf-zero    { color: #c0392b; font-weight: bold; }
+    .cf-partial { color: #d68910; font-weight: bold; }
+    .cf-full    { color: #1e8449; font-weight: bold; }
+    .cf-struc   { color: #922b21; font-weight: bold; }
+    .cf-badge {
+      display: inline-block; padding: 1px 5px; font-size: 7px;
+      font-weight: bold; letter-spacing: 0.04em; border-radius: 2px;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .cf-badge-active    { background: #fde8e8; color: #c0392b; border: 1px solid #f5a0a0; }
+    .cf-badge-contained { background: #eafaf1; color: #1e8449; border: 1px solid #a2d9b5; }
+    .cf-badge-monitor   { background: #fef9e7; color: #d68910; border: 1px solid #f9e4a0; }
+    .cf-footer {
+      margin-top: 6px; font-size: 7.5px; color: #bbb;
+      border-top: 1px solid #eee; padding-top: 4px;
+    }
+
+    /* ── Window 2: Windy.com ─────────────────────────────────── */
+
+    #w-epa { background: #0d1a28; }
+
+    .windy-map {
+      position: relative; flex: 1; overflow: hidden;
+      background:
+        radial-gradient(ellipse at 55% 35%, rgba(25,90,140,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse at 20% 75%, rgba(10,50,90,0.3) 0%, transparent 40%),
+        #0d1a28;
+    }
+    .windy-overlay {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(72deg, transparent 0, transparent 14px, rgba(60,160,255,0.025) 14px, rgba(60,160,255,0.025) 15px),
+        repeating-linear-gradient(28deg, transparent 0, transparent 20px, rgba(60,160,255,0.018) 20px, rgba(60,160,255,0.018) 21px);
+    }
+    .windy-smoke {
+      position: absolute; top: 15%; left: 38%; width: 50%; height: 45%;
+      background: radial-gradient(ellipse at 30% 40%, rgba(140,90,20,0.6) 0%, rgba(90,55,10,0.25) 45%, transparent 70%);
+      border-radius: 50%; transform: rotate(-25deg) scaleX(1.6);
+    }
+    .windy-logo {
+      position: absolute; top: 7px; left: 8px; z-index: 2;
+      font-family: Arial, sans-serif; font-size: 10.5px; font-weight: 900;
+      color: #fff; letter-spacing: -0.01em; text-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    }
+    .windy-logo em { color: #4fa8e0; font-style: normal; }
+    .windy-panel {
+      position: absolute; top: 8px; right: 7px; z-index: 2;
+      background: rgba(6,14,26,0.94); border: 1px solid rgba(70,140,220,0.18);
+      padding: 7px 9px; min-width: 108px; font-family: Arial, sans-serif;
+      font-size: 8.5px; color: #90b8d8; line-height: 1.75;
+    }
+    .windy-ploc {
+      font-size: 9px; font-weight: bold; color: #fff; margin-bottom: 4px;
+      padding-bottom: 4px; border-bottom: 1px solid rgba(70,140,220,0.15);
+    }
+    .windy-prow { display: flex; justify-content: space-between; gap: 8px; }
+    .windy-pk  { color: #507090; }
+    .windy-pv  { color: #fff; font-weight: bold; font-family: 'Courier New', monospace; }
+    .windy-pvw { color: #ff6b35; font-weight: bold; font-family: 'Courier New', monospace; }
+    .windy-time {
+      position: absolute; bottom: 18px; left: 8px; z-index: 2;
+      font-size: 7.5px; color: rgba(255,255,255,0.35); font-family: 'Courier New', monospace;
+    }
+    .windy-legend-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 14px; z-index: 2;
+      background: linear-gradient(90deg,
+        #3a0ca3 0%, #4361ee 14%, #4cc9f0 26%, #06d6a0 38%,
+        #aee9c3 50%, #ffd166 62%, #ef476f 76%, #8b0000 100%
+      );
+    }
+    .windy-legend-nums {
+      position: absolute; bottom: 14px; left: 0; right: 0; z-index: 2;
+      display: flex; justify-content: space-between;
+      padding: 0 3px; font-size: 6.5px; color: rgba(255,255,255,0.4);
+      font-family: Arial, sans-serif;
+    }
+    .windy-legend-lbl {
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+      z-index: 2; font-size: 7px; color: rgba(255,255,255,0.3);
+      font-family: Arial, sans-serif; letter-spacing: 0.08em; white-space: nowrap;
+    }
+
+    /* ── Window 3: NASA FIRMS ───────────────────────────────── */
+
+    #w-nws { background: #09101e; }
+
+    .firms-hdr {
+      background: #0b2e6b; padding: 4px 8px; flex-shrink: 0;
+      display: flex; align-items: center; gap: 6px;
+      border-bottom: 1px solid #153580;
+    }
+    .firms-nasa {
+      background: #fc3d21; color: #fff; font-family: Arial, sans-serif;
+      font-size: 8px; font-weight: 900; letter-spacing: 0.12em; padding: 1px 5px;
+    }
+    .firms-brand {
+      font-family: Arial, sans-serif; font-size: 8px; color: rgba(255,255,255,0.75);
+      letter-spacing: 0.05em;
+    }
+    .firms-dt {
+      margin-left: auto; font-family: 'Courier New', monospace;
+      font-size: 7.5px; color: #6fa0e0;
+    }
+    .firms-layout { display: flex; flex: 1; overflow: hidden; }
+    .firms-sidebar {
+      width: 78px; flex-shrink: 0; background: #060d1a;
+      border-right: 1px solid #0e2040; padding: 6px 7px;
+      font-family: Arial, sans-serif; font-size: 7.5px; color: #7090b0; overflow: hidden;
+    }
+    .firms-slbl {
+      font-size: 6.5px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #304a70; margin: 6px 0 3px;
+    }
+    .firms-slbl:first-child { margin-top: 0; }
+    .firms-srow { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .firms-sk  { font-size: 7px; color: #3a5878; }
+    .firms-sv  { font-size: 7.5px; color: #80b0e0; font-weight: bold; }
+    .firms-sv-red { font-size: 7.5px; color: #ff5555; font-weight: bold; }
+    .firms-sat-item {
+      display: flex; align-items: center; gap: 3px;
+      margin-bottom: 2px; font-size: 7px; color: #6080a0;
+    }
+    .firms-sat-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .firms-active-sat { color: #80b8ff; }
+    .firms-map {
+      flex: 1; position: relative; overflow: hidden;
+      background: linear-gradient(170deg, #060e1c 0%, #091528 55%, #060c18 100%);
+    }
+    .firms-map::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 5% 50%, rgba(5,25,60,0.5) 0%, transparent 35%),
+        radial-gradient(ellipse at 50% 95%, rgba(5,20,50,0.4) 0%, transparent 30%);
+    }
+    .firms-fire-dot {
+      position: absolute; border-radius: 50%;
+      animation: alert-pulse 1.6s ease-in-out infinite;
+    }
+    .firms-map-legend {
+      position: absolute; bottom: 5px; left: 5px;
+      font-family: Arial, sans-serif; font-size: 6.5px;
+      color: rgba(255,255,255,0.4); display: flex; flex-direction: column; gap: 2px;
+    }
+    .firms-map-legend-row { display: flex; align-items: center; gap: 3px; }
+    .firms-map-legend-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .firms-map-src {
+      position: absolute; bottom: 5px; right: 5px;
+      font-family: Arial, sans-serif; font-size: 6px; color: rgba(255,255,255,0.2);
+    }
   </style>
 </head>
 <body>
@@ -749,10 +936,13 @@
 
   <div id="fullpage">
 
-    <!-- ── Section 1: Date Screen ─────────────────────────── -->
+    <!-- ── Section 1: Title Card ──────────────────────────── -->
     <div class="section" id="section-date">
       <div id="date-display">
-        <span id="date-text"></span><span id="date-cursor">_</span>
+        <div id="date-line-1">
+          <span id="date-text"></span>
+        </div>
+        <div id="date-location"></div>
       </div>
     </div>
 
@@ -760,123 +950,149 @@
          Agricultural disaster data — Camp Fire, Nov 8 2018    -->
     <div class="section" id="section-grid">
 
-      <!-- Window 1: USDA NASS — crop data table (auto-scroll) -->
+      <!-- Window 1: CAL FIRE Incidents (auto-scroll) -->
       <div class="chaos-win" id="w-usda">
         <div class="win-chrome">
           <div class="win-dots"><span></span><span></span><span></span></div>
-          <div class="win-url">https://quickstats.nass.usda.gov/results/D1F0B3C8-27C4-3B08-B9F5-CA2BAFCA | CALIFORNIA CROPS &amp; PLANTS | BUTTE COUNTY | 2017–2018</div>
+          <div class="win-url">https://www.fire.ca.gov/incidents — CAL FIRE Active Incidents | California | 2018-11-08</div>
         </div>
-        <div class="win-body usda-body">
+        <div class="win-body calfire-body">
           <div class="win-scroll">
-            <h3>CALIFORNIA AGRICULTURAL STATISTICS — BUTTE COUNTY</h3>
-            <p class="usda-meta">Survey: All Crops &amp; Plants &nbsp;|&nbsp; State: California &nbsp;|&nbsp; County: Butte &nbsp;|&nbsp; Period: 2017–2018 &nbsp;|&nbsp; Retrieved: 2018-11-08 09:03 PST</p>
-            <table class="usda-table">
-              <tr><th>COMMODITY</th><th>YR</th><th>UNIT DESC</th><th>VALUE</th><th>CV%</th><th>NOTE</th></tr>
-              <tr><td>ALMONDS</td><td>2018</td><td>LB / ACRE</td><td>2,240</td><td>4.2</td><td>[PRELIM]</td></tr>
-              <tr><td>ALMONDS</td><td>2017</td><td>LB / ACRE</td><td>2,890</td><td>3.1</td><td></td></tr>
-              <tr><td>ALMONDS, PRODUCTION</td><td>2018</td><td>$ / LB</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>WALNUTS</td><td>2018</td><td>LB / ACRE</td><td>1,740</td><td>5.8</td><td>[PRELIM]</td></tr>
-              <tr><td>WALNUTS</td><td>2017</td><td>LB / ACRE</td><td>2,105</td><td>4.4</td><td></td></tr>
-              <tr><td>RICE</td><td>2018</td><td>ACRES HARVESTED</td><td>34,200</td><td>2.1</td><td>[PRELIM]</td></tr>
-              <tr><td>RICE</td><td>2017</td><td>ACRES HARVESTED</td><td>41,800</td><td>1.8</td><td></td></tr>
-              <tr><td>RICE, PRODUCTION</td><td>2018</td><td>$ MILLION</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>WHEAT, WINTER</td><td>2018</td><td>BU / ACRE</td><td>52</td><td>6.3</td><td>[PRELIM]</td></tr>
-              <tr><td>OLIVES, TABLE</td><td>2018</td><td>TONS</td><td>(NA)</td><td>—</td><td></td></tr>
-              <tr><td>PRUNES, DRIED</td><td>2018</td><td>LB / ACRE</td><td>3,610</td><td>8.1</td><td>[PRELIM]</td></tr>
-              <tr><td>CORN, GRAIN</td><td>2018</td><td>BU / ACRE</td><td>189</td><td>3.4</td><td>[PRELIM]</td></tr>
-              <tr><td>PEACHES</td><td>2018</td><td>LB / ACRE</td><td>(L)</td><td>—</td><td></td></tr>
-              <tr><td>SUNFLOWER</td><td>2018</td><td>LB / ACRE</td><td>1,490</td><td>12.3</td><td>[PRELIM]</td></tr>
-              <tr><td>HAY, ALFALFA</td><td>2018</td><td>TONS / ACRE</td><td>7.1</td><td>2.8</td><td>[PRELIM]</td></tr>
-              <tr><td>OATS</td><td>2018</td><td>BU / ACRE</td><td>68</td><td>7.9</td><td></td></tr>
-              <tr><td>PASTURE &amp; RANGE</td><td>2018</td><td>$ / ACRE</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>VEGETABLES, OTHER</td><td>2018</td><td>ACRES</td><td>1,240</td><td>9.1</td><td>[PRELIM]</td></tr>
+            <div class="cf-bar">
+              <span class="cf-logo">CAL FIRE</span>
+              <span class="cf-subtitle">Active Incidents — California</span>
+              <span class="cf-time">11/08/2018 &nbsp;11:14 PST</span>
+            </div>
+            <div class="cf-summary">Displaying <strong>42</strong> active incidents &nbsp;|&nbsp; <span class="cf-emerg">⚠ 3 Major Incidents</span></div>
+            <table class="calfire-table">
+              <thead>
+                <tr><th>Fire Name</th><th>County</th><th>Acres</th><th>Cont.</th><th>Started</th><th>Struct.</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="cf-fire-name">Camp</td><td>Butte</td><td>70,000+</td><td class="cf-pct cf-zero">0%</td><td>11/08 06:29</td><td class="cf-struc">18,804</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Woolsey</td><td>Los Angeles / Ventura</td><td>8,200</td><td class="cf-pct cf-zero">0%</td><td>11/08 14:00</td><td class="cf-struc">843</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Hill</td><td>Ventura</td><td>4,531</td><td class="cf-pct cf-partial">15%</td><td>11/08 13:35</td><td>—</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Delta</td><td>Shasta</td><td>263</td><td class="cf-pct cf-zero">0%</td><td>11/08 12:45</td><td>—</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Loma</td><td>Santa Cruz</td><td>4,152</td><td class="cf-pct cf-full">100%</td><td>11/01/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+                <tr><td class="cf-fire-name">Bear</td><td>El Dorado</td><td>168</td><td class="cf-pct cf-full">85%</td><td>11/05/18</td><td>—</td><td><span class="cf-badge cf-badge-monitor">Monitor</span></td></tr>
+                <tr><td class="cf-fire-name">Alder</td><td>Riverside</td><td>40</td><td class="cf-pct cf-full">100%</td><td>11/07/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+                <tr><td class="cf-fire-name">Sky</td><td>Napa</td><td>892</td><td class="cf-pct cf-full">100%</td><td>10/28/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+              </tbody>
             </table>
-            <p class="usda-note">Source: USDA National Agricultural Statistics Service. [D] = Withheld to avoid disclosing data for individual operations. (NA) = Not Available. (L) = Less than half the unit shown. CV% = Coefficient of Variation.</p>
+            <p class="cf-footer">Source: CAL FIRE — incidents.fire.ca.gov &nbsp;|&nbsp; Data refreshed every 15 minutes &nbsp;|&nbsp; Acreage figures preliminary</p>
             <br>
             <!-- duplicate for seamless loop -->
-            <h3>CALIFORNIA AGRICULTURAL STATISTICS — BUTTE COUNTY</h3>
-            <p class="usda-meta">Survey: All Crops &amp; Plants &nbsp;|&nbsp; State: California &nbsp;|&nbsp; County: Butte &nbsp;|&nbsp; Period: 2017–2018 &nbsp;|&nbsp; Retrieved: 2018-11-08 09:03 PST</p>
-            <table class="usda-table">
-              <tr><th>COMMODITY</th><th>YR</th><th>UNIT DESC</th><th>VALUE</th><th>CV%</th><th>NOTE</th></tr>
-              <tr><td>ALMONDS</td><td>2018</td><td>LB / ACRE</td><td>2,240</td><td>4.2</td><td>[PRELIM]</td></tr>
-              <tr><td>ALMONDS</td><td>2017</td><td>LB / ACRE</td><td>2,890</td><td>3.1</td><td></td></tr>
-              <tr><td>ALMONDS, PRODUCTION</td><td>2018</td><td>$ / LB</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>WALNUTS</td><td>2018</td><td>LB / ACRE</td><td>1,740</td><td>5.8</td><td>[PRELIM]</td></tr>
-              <tr><td>WALNUTS</td><td>2017</td><td>LB / ACRE</td><td>2,105</td><td>4.4</td><td></td></tr>
-              <tr><td>RICE</td><td>2018</td><td>ACRES HARVESTED</td><td>34,200</td><td>2.1</td><td>[PRELIM]</td></tr>
-              <tr><td>RICE</td><td>2017</td><td>ACRES HARVESTED</td><td>41,800</td><td>1.8</td><td></td></tr>
-              <tr><td>RICE, PRODUCTION</td><td>2018</td><td>$ MILLION</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>WHEAT, WINTER</td><td>2018</td><td>BU / ACRE</td><td>52</td><td>6.3</td><td>[PRELIM]</td></tr>
-              <tr><td>OLIVES, TABLE</td><td>2018</td><td>TONS</td><td>(NA)</td><td>—</td><td></td></tr>
-              <tr><td>PRUNES, DRIED</td><td>2018</td><td>LB / ACRE</td><td>3,610</td><td>8.1</td><td>[PRELIM]</td></tr>
-              <tr><td>CORN, GRAIN</td><td>2018</td><td>BU / ACRE</td><td>189</td><td>3.4</td><td>[PRELIM]</td></tr>
-              <tr><td>PEACHES</td><td>2018</td><td>LB / ACRE</td><td>(L)</td><td>—</td><td></td></tr>
-              <tr><td>SUNFLOWER</td><td>2018</td><td>LB / ACRE</td><td>1,490</td><td>12.3</td><td>[PRELIM]</td></tr>
-              <tr><td>HAY, ALFALFA</td><td>2018</td><td>TONS / ACRE</td><td>7.1</td><td>2.8</td><td>[PRELIM]</td></tr>
-              <tr><td>OATS</td><td>2018</td><td>BU / ACRE</td><td>68</td><td>7.9</td><td></td></tr>
-              <tr><td>PASTURE &amp; RANGE</td><td>2018</td><td>$ / ACRE</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
-              <tr><td>VEGETABLES, OTHER</td><td>2018</td><td>ACRES</td><td>1,240</td><td>9.1</td><td>[PRELIM]</td></tr>
+            <div class="cf-bar">
+              <span class="cf-logo">CAL FIRE</span>
+              <span class="cf-subtitle">Active Incidents — California</span>
+              <span class="cf-time">11/08/2018 &nbsp;11:14 PST</span>
+            </div>
+            <div class="cf-summary">Displaying <strong>42</strong> active incidents &nbsp;|&nbsp; <span class="cf-emerg">⚠ 3 Major Incidents</span></div>
+            <table class="calfire-table">
+              <thead>
+                <tr><th>Fire Name</th><th>County</th><th>Acres</th><th>Cont.</th><th>Started</th><th>Struct.</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="cf-fire-name">Camp</td><td>Butte</td><td>70,000+</td><td class="cf-pct cf-zero">0%</td><td>11/08 06:29</td><td class="cf-struc">18,804</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Woolsey</td><td>Los Angeles / Ventura</td><td>8,200</td><td class="cf-pct cf-zero">0%</td><td>11/08 14:00</td><td class="cf-struc">843</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Hill</td><td>Ventura</td><td>4,531</td><td class="cf-pct cf-partial">15%</td><td>11/08 13:35</td><td>—</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Delta</td><td>Shasta</td><td>263</td><td class="cf-pct cf-zero">0%</td><td>11/08 12:45</td><td>—</td><td><span class="cf-badge cf-badge-active">Active</span></td></tr>
+                <tr><td class="cf-fire-name">Loma</td><td>Santa Cruz</td><td>4,152</td><td class="cf-pct cf-full">100%</td><td>11/01/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+                <tr><td class="cf-fire-name">Bear</td><td>El Dorado</td><td>168</td><td class="cf-pct cf-full">85%</td><td>11/05/18</td><td>—</td><td><span class="cf-badge cf-badge-monitor">Monitor</span></td></tr>
+                <tr><td class="cf-fire-name">Alder</td><td>Riverside</td><td>40</td><td class="cf-pct cf-full">100%</td><td>11/07/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+                <tr><td class="cf-fire-name">Sky</td><td>Napa</td><td>892</td><td class="cf-pct cf-full">100%</td><td>10/28/18</td><td>—</td><td><span class="cf-badge cf-badge-contained">Contained</span></td></tr>
+              </tbody>
             </table>
-            <p class="usda-note">Source: USDA National Agricultural Statistics Service. [D] = Withheld to avoid disclosing data for individual operations. (NA) = Not Available. (L) = Less than half the unit shown. CV% = Coefficient of Variation.</p>
+            <p class="cf-footer">Source: CAL FIRE — incidents.fire.ca.gov &nbsp;|&nbsp; Data refreshed every 15 minutes &nbsp;|&nbsp; Acreage figures preliminary</p>
           </div>
         </div>
       </div>
 
-      <!-- Window 2: EPA AirNow — AQI Hazardous (shaking) -->
+      <!-- Window 2: Windy.com — wind & smoke map (shaking) -->
       <div class="chaos-win" id="w-epa">
         <div class="win-chrome">
           <div class="win-dots"><span></span><span></span><span></span></div>
-          <div class="win-url">https://www.airnow.gov/index.cfm?action=airnow.local_city&cityid=2098&param=PM25&aqitype=aqi</div>
+          <div class="win-url">https://www.windy.com/?38.406,-121.429,5 — Wind &amp; Weather | Northern California | 2018-11-08 11:00 PST</div>
         </div>
-        <div class="win-body epa-body">
-          <div class="epa-header">AirNow.gov &nbsp;|&nbsp; Air Quality Index</div>
-          <div class="epa-location">Paradise, CA &nbsp;—&nbsp; Nov 8, 2018 &nbsp;11:00 AM</div>
-          <div class="epa-aqi-box">
-            <div class="epa-aqi-num">505</div>
-            <div class="epa-aqi-label">Hazardous</div>
-            <div class="epa-aqi-sub">Health Alert: Everyone is affected</div>
+        <div class="win-body" style="padding:0; display:flex; flex-direction:column;">
+          <div class="windy-map">
+            <div class="windy-overlay"></div>
+            <div class="windy-smoke"></div>
+            <div class="windy-logo">W<em>indy</em>.com</div>
+            <div class="windy-panel">
+              <div class="windy-ploc">Paradise, CA</div>
+              <div class="windy-prow"><span class="windy-pk">Wind</span><span class="windy-pvw">48 mph</span></div>
+              <div class="windy-prow"><span class="windy-pk">Gust</span><span class="windy-pvw">72 mph</span></div>
+              <div class="windy-prow"><span class="windy-pk">Dir</span><span class="windy-pv">NNE</span></div>
+              <div class="windy-prow"><span class="windy-pk">Temp</span><span class="windy-pv">82°F</span></div>
+              <div class="windy-prow"><span class="windy-pk">Humid.</span><span class="windy-pv">9%</span></div>
+              <div class="windy-prow"><span class="windy-pk">Pressure</span><span class="windy-pv">1012</span></div>
+            </div>
+            <div class="windy-time">Thu Nov 08, 2018 &nbsp;11:00 PST</div>
+            <div class="windy-legend-nums">
+              <span>0</span><span>15</span><span>30</span><span>45</span><span>60</span><span>75+</span>
+            </div>
+            <div class="windy-legend-lbl">WIND SPEED mph</div>
+            <div class="windy-legend-bar"></div>
           </div>
-          <table class="epa-table">
-            <tr><td>Pollutant</td><td>PM2.5 (Fine Particles)</td></tr>
-            <tr><td>Concentration</td><td>999.9 µg/m³</td></tr>
-            <tr><td>24-hr Standard</td><td>35.0 µg/m³</td></tr>
-            <tr><td>Reporting Station</td><td>BCAQMD — Paradise #1</td></tr>
-            <tr><td>Station Status</td><td class="epa-offline">⚠ OFFLINE since 09:42 PST</td></tr>
-            <tr><td>Fallback Source</td><td>MODIS Satellite AOD Estimate</td></tr>
-            <tr><td>Forecast (Tomorrow)</td><td class="epa-offline">HAZARDOUS</td></tr>
-          </table>
         </div>
       </div>
 
-      <!-- Window 3: NWS Fire Weather Alert -->
+      <!-- Window 3: NASA FIRMS — fire detection map -->
       <div class="chaos-win" id="w-nws">
         <div class="win-chrome">
           <div class="win-dots"><span></span><span></span><span></span></div>
-          <div class="win-url">https://forecast.weather.gov/showsigwx.php?warnzone=CAZ066&warncounty=CAC007&firewx=1&wfo=STO</div>
+          <div class="win-url">https://firms.modaps.eosdis.nasa.gov/usfs/map/#d:2018-11-08 — NASA LANCE FIRMS | VIIRS &amp; MODIS Fire Detections | US/Canada</div>
         </div>
-        <div class="win-body nws-body">
-<div class="nws-urgent">URGENT — FIRE WEATHER MESSAGE</div>NATIONAL WEATHER SERVICE SACRAMENTO CA
-648 AM PST THU NOV 08 2018
-
-...RED FLAG WARNING IN EFFECT THROUGH 6 PM PST FRIDAY
-FOR PORTIONS OF NORTHERN CALIFORNIA...
-
-<span class="nws-bold">* AFFECTED AREA...NORTHERN SACRAMENTO VALLEY INCLUDING
-  BUTTE...COLUSA...GLENN AND TEHAMA COUNTIES.</span>
-
-<span class="nws-bold">* WIND...N 35 TO 45 MPH WITH GUSTS TO 65 MPH.</span>
-<span class="nws-bold">* RELATIVE HUMIDITY...7 TO 13 PERCENT.</span>
-<span class="nws-bold">* TEMPERATURE...77 TO 87 DEGREES F.</span>
-
-PRECAUTIONARY/PREPAREDNESS ACTIONS...
-
-A RED FLAG WARNING MEANS THAT CRITICAL FIRE WEATHER
-CONDITIONS ARE EITHER IMMINENT OR OCCURRING. RAPID FIRE
-SPREAD AND EXTREME FIRE BEHAVIOR IS POSSIBLE. ALL BURNING
-IS STRONGLY DISCOURAGED. HAVE EVACUATION PLANS READY.
-
-&&
-END</div>
+        <div class="win-body" style="padding:0; display:flex; flex-direction:column;">
+          <div class="firms-hdr">
+            <span class="firms-nasa">NASA</span>
+            <span class="firms-brand">LANCE &nbsp;|&nbsp; FIRMS US/Canada</span>
+            <span class="firms-dt">2018-11-08</span>
+          </div>
+          <div class="firms-layout">
+            <div class="firms-sidebar">
+              <div class="firms-slbl">Date</div>
+              <div class="firms-srow"><span class="firms-sk">Selected</span><span class="firms-sv">Nov 8 2018</span></div>
+              <div class="firms-srow"><span class="firms-sk">Range</span><span class="firms-sv">24 hr</span></div>
+              <div class="firms-slbl">Detections</div>
+              <div class="firms-srow"><span class="firms-sk">VIIRS</span><span class="firms-sv-red">1,842</span></div>
+              <div class="firms-srow"><span class="firms-sk">MODIS</span><span class="firms-sv-red">749</span></div>
+              <div class="firms-srow"><span class="firms-sk">Total</span><span class="firms-sv-red">2,591</span></div>
+              <div class="firms-slbl">Satellites</div>
+              <div class="firms-sat-item"><span class="firms-sat-dot" style="background:#ff4444;"></span><span class="firms-active-sat">NOAA-20</span></div>
+              <div class="firms-sat-item"><span class="firms-sat-dot" style="background:#ff8800;"></span><span class="firms-active-sat">Suomi NPP</span></div>
+              <div class="firms-sat-item"><span class="firms-sat-dot" style="background:#ffaa44;"></span>Terra</div>
+              <div class="firms-sat-item"><span class="firms-sat-dot" style="background:#ffcc66;"></span>Aqua</div>
+              <div class="firms-slbl">Basemap</div>
+              <div class="firms-srow"><span class="firms-sk">Style</span><span class="firms-sv">Dark</span></div>
+            </div>
+            <div class="firms-map">
+              <!-- Camp Fire cluster — Butte County, NE California -->
+              <div class="firms-fire-dot" style="width:9px;height:9px;background:#ff1100;top:22%;left:60%;box-shadow:0 0 8px rgba(255,17,0,0.9);"></div>
+              <div class="firms-fire-dot" style="width:6px;height:6px;background:#ff4400;top:24%;left:57%;box-shadow:0 0 5px rgba(255,68,0,0.7);animation-delay:0.3s;"></div>
+              <div class="firms-fire-dot" style="width:5px;height:5px;background:#ff6600;top:20%;left:63%;box-shadow:0 0 4px rgba(255,102,0,0.6);animation-delay:0.6s;"></div>
+              <div class="firms-fire-dot" style="width:7px;height:7px;background:#ff2200;top:26%;left:62%;box-shadow:0 0 6px rgba(255,34,0,0.75);animation-delay:0.2s;"></div>
+              <div class="firms-fire-dot" style="width:4px;height:4px;background:#ff8800;top:19%;left:59%;animation-delay:0.8s;"></div>
+              <div class="firms-fire-dot" style="width:5px;height:5px;background:#ff3300;top:25%;left:55%;box-shadow:0 0 4px rgba(255,51,0,0.6);animation-delay:1.1s;"></div>
+              <div class="firms-fire-dot" style="width:4px;height:4px;background:#ff5500;top:22%;left:65%;animation-delay:0.5s;"></div>
+              <div class="firms-fire-dot" style="width:3px;height:3px;background:#ff7700;top:28%;left:59%;animation-delay:1.4s;"></div>
+              <!-- Woolsey Fire — LA/Ventura, S California -->
+              <div class="firms-fire-dot" style="width:5px;height:5px;background:#ff4400;top:68%;left:52%;box-shadow:0 0 4px rgba(255,68,0,0.6);animation-delay:0.5s;"></div>
+              <div class="firms-fire-dot" style="width:4px;height:4px;background:#ff6600;top:71%;left:55%;animation-delay:0.9s;"></div>
+              <div class="firms-fire-dot" style="width:3px;height:3px;background:#ff8800;top:70%;left:50%;animation-delay:1.2s;"></div>
+              <!-- Hill Fire — Ventura -->
+              <div class="firms-fire-dot" style="width:3px;height:3px;background:#ff9900;top:67%;left:47%;animation-delay:0.7s;"></div>
+              <div class="firms-fire-dot" style="width:3px;height:3px;background:#ffaa00;top:69%;left:45%;animation-delay:1.5s;"></div>
+              <div class="firms-map-legend">
+                <div class="firms-map-legend-row"><span class="firms-map-legend-dot" style="background:#ff1100;"></span>High confidence</div>
+                <div class="firms-map-legend-row"><span class="firms-map-legend-dot" style="background:#ff8800;"></span>Nominal confidence</div>
+                <div class="firms-map-legend-row"><span class="firms-map-legend-dot" style="background:#ffcc00;"></span>Low confidence</div>
+              </div>
+              <div class="firms-map-src">© NASA LANCE / EOSDIS</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Window 4: Terminal — data download in progress -->
@@ -1010,6 +1226,7 @@ END</div>
     // ═══════════════════════════════════════════════════════════
     const CONFIG = {
       /* EDITABLE */ date:          "November 8, 2018",
+      /* EDITABLE */ location:      "Paradise, CA",
       /* EDITABLE */ typewriterMs:  80,        // ms per character
       /* EDITABLE */ logo:          "images/logo.png",
       /* EDITABLE */ productName:   "Mooch",
@@ -1018,7 +1235,8 @@ END</div>
     };
 
     document.addEventListener("DOMContentLoaded", function () {
-      // ── Section 3 & 4 bindings ──────────────────────────────
+      // ── Static bindings ─────────────────────────────────────
+      document.getElementById("date-text").textContent            = CONFIG.date;
       document.getElementById("product-logo-img").src             = CONFIG.logo;
       document.getElementById("product-name").textContent         = CONFIG.productName;
       document.getElementById("product-tagline").textContent      = CONFIG.tagline;
@@ -1026,20 +1244,20 @@ END</div>
 
       // ── Init fullPage.js ─────────────────────────────────────
       new fullpage("#fullpage", {
-        scrollOverflow: false,
-        autoScrolling:  true,
-        fitToSection:   true,
+        scrollOverflow:   false,
+        autoScrolling:    true,
+        fitToSection:     true,
+        verticalCentered: false,
 
         // Typewriter fires each time Section 1 becomes active
         afterLoad: function (origin, destination) {
           if (destination.index !== 0) return;
-          const el     = document.getElementById("date-text");
-          const text   = CONFIG.date;
-          let i = 0;
-          el.textContent = "";
-          const timer = setInterval(function () {
-            el.textContent = text.slice(0, ++i);
-            if (i >= text.length) clearInterval(timer);
+          const locEl = document.getElementById("date-location");
+          locEl.textContent = "";
+          let j = 0;
+          const locTimer = setInterval(function () {
+            locEl.textContent = CONFIG.location.slice(0, ++j);
+            if (j >= CONFIG.location.length) clearInterval(locTimer);
           }, CONFIG.typewriterMs);
         },
       });
