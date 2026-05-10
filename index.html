@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HD26</title>
+
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.css">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Shared animations ──────────────────────────────────── */
+
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    @keyframes scroll-up {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    @keyframes win-shake {
+      0%, 88%, 100% { transform: translate(0, 0) rotate(-0.5deg); }
+      89%  { transform: translate(-3px,  1px) rotate(-1.2deg); }
+      90%  { transform: translate( 3px, -2px) rotate( 0.2deg); }
+      91%  { transform: translate(-2px,  2px) rotate(-0.8deg); }
+      92%  { transform: translate( 2px, -1px) rotate(-1.0deg); }
+      93%  { transform: translate(-3px,  1px) rotate(-0.5deg); }
+      94%  { transform: translate( 2px, -2px) rotate( 0.0deg); }
+    }
+
+    @keyframes alert-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    @keyframes ticker-scroll {
+      0%   { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── Section 1: Date Screen ─────────────────────────────── */
+
+    #section-date {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #date-display {
+      display: inline-flex;
+      align-items: baseline;
+    }
+
+    #date-text {
+      color: #fff;
+      font-size: clamp(2rem, 8vw, 10rem);
+      font-weight: 100;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    #date-cursor {
+      color: #fff;
+      font-size: clamp(2rem, 8vw, 10rem);
+      font-weight: 100;
+      animation: cursor-blink 0.8s step-end infinite;
+      margin-left: 0.06em;
+      line-height: 1;
+    }
+
+    /* ── Section 2: Information Overload ────────────────────── */
+
+    #section-grid {
+      position: relative;
+      overflow: hidden;
+      background: #050505;
+    }
+
+    /* CRT scan-line overlay */
+    #section-grid::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.08) 3px,
+        rgba(0, 0, 0, 0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Base chaos window */
+    .chaos-win {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #555;
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .win-chrome {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      background: #2c2c2c;
+      border-bottom: 1px solid #444;
+      flex-shrink: 0;
+    }
+
+    .win-dots {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .win-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .win-dots span:nth-child(1) { background: #ff5f57; }
+    .win-dots span:nth-child(2) { background: #febc2e; }
+    .win-dots span:nth-child(3) { background: #28c840; }
+
+    .win-url {
+      flex: 1;
+      font-family: 'Courier New', monospace;
+      font-size: 9.5px;
+      color: #999;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #1c1c1c;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid #3a3a3a;
+    }
+
+    .win-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .win-scroll {
+      animation: scroll-up 38s linear infinite;
+    }
+
+    /* ── Window 1: USDA NASS ────────────────────────────────── */
+
+    #w-usda {
+      top: 3%; left: 2%;
+      width: 48%; height: 74%;
+      z-index: 1;
+      background: #f5f5f0;
+      color: #111;
+    }
+
+    .usda-body { font-family: Arial, sans-serif; color: #111; }
+
+    .usda-body h3 {
+      font-size: 11.5px;
+      color: #1a3a5e;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .usda-meta {
+      font-size: 9px;
+      color: #666;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .usda-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+    }
+
+    .usda-table th {
+      background: #1a3a5e;
+      color: #fff;
+      padding: 3px 5px;
+      text-align: left;
+      font-size: 9px;
+      font-weight: normal;
+      letter-spacing: 0.04em;
+    }
+
+    .usda-table td {
+      padding: 2px 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .usda-table tr:nth-child(even) td { background: #edf2f7; }
+
+    .usda-note {
+      font-size: 8.5px;
+      color: #888;
+      margin-top: 8px;
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    /* ── Window 2: EPA AirNow ───────────────────────────────── */
+
+    #w-epa {
+      top: 6%; right: 1%;
+      width: 37%; height: 50%;
+      z-index: 3;
+      background: #fff;
+      animation: win-shake 10s ease-in-out infinite;
+      transform-origin: center center;
+    }
+
+    .epa-body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .epa-header   { font-size: 9px; color: #666; margin-bottom: 3px; }
+    .epa-location { font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #111; }
+
+    .epa-aqi-box {
+      background: #7b0023;
+      color: #fff;
+      width: 100%;
+      padding: 10px 8px;
+      margin: 6px 0;
+      animation: alert-pulse 2.2s ease-in-out infinite;
+    }
+
+    .epa-aqi-num {
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1;
+      font-family: 'Courier New', monospace;
+    }
+
+    .epa-aqi-label {
+      font-size: 13px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 2px;
+    }
+
+    .epa-aqi-sub { font-size: 9.5px; opacity: 0.88; margin-top: 1px; }
+
+    .epa-table {
+      width: 100%;
+      text-align: left;
+      font-size: 9.5px;
+      border-top: 1px solid #eee;
+      margin-top: 6px;
+    }
+
+    .epa-table td { padding: 2px 3px; }
+    .epa-table td:first-child { color: #777; }
+    .epa-table td:last-child  { font-weight: bold; color: #111; }
+    .epa-offline { color: #c0392b !important; }
+
+    /* ── Window 3: NWS Fire Weather ─────────────────────────── */
+
+    #w-nws {
+      top: 28%; left: 18%;
+      width: 43%; height: 36%;
+      z-index: 2;
+      background: #fff;
+      transform: rotate(-1.2deg);
+    }
+
+    .nws-urgent {
+      background: #cc0000;
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      padding: 3px 0;
+      margin: -12px -12px 8px -12px;
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      font-family: 'Courier New', monospace;
+    }
+
+    .nws-body {
+      font-family: 'Courier New', monospace;
+      font-size: 9.8px;
+      color: #000;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      overflow: hidden;
+    }
+
+    .nws-bold { font-weight: bold; }
+
+    /* ── Window 4: Terminal ─────────────────────────────────── */
+
+    #w-term {
+      bottom: 26px; left: 2%;
+      width: 40%; height: 30%;
+      z-index: 5;
+      background: #0a0a0a;
+      color: #00ff41;
+      border-color: #1a4a1a;
+    }
+
+    .term-chrome {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      background: #111;
+      border-bottom: 1px solid #1a4a1a;
+      flex-shrink: 0;
+    }
+
+    .term-title {
+      font-family: 'Courier New', monospace;
+      font-size: 9.5px;
+      color: #00cc33;
+      opacity: 0.7;
+    }
+
+    .term-body {
+      padding: 8px 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 9.5px;
+      line-height: 1.6;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .t-prompt  { color: #00ff41; }
+    .t-cmd     { color: #ffffff; }
+    .t-out     { color: #00cc33; opacity: 0.85; }
+    .t-err     { color: #ff4444; }
+    .t-warn    { color: #ffaa00; }
+    .t-dim     { color: #00ff41; opacity: 0.5; }
+
+    .t-cursor {
+      display: inline-block;
+      width: 6px; height: 11px;
+      background: #00ff41;
+      animation: cursor-blink 0.7s step-end infinite;
+      vertical-align: middle;
+    }
+
+    /* ── Window 5: Academic Paper ───────────────────────────── */
+
+    #w-paper {
+      bottom: 26px; right: 1%;
+      width: 38%; height: 54%;
+      z-index: 4;
+      background: #fefefe;
+      color: #111;
+      transform: rotate(0.9deg);
+    }
+
+    .paper-body {
+      font-family: 'Times New Roman', Georgia, serif;
+      font-size: 10.5px;
+      color: #111;
+      overflow: hidden;
+    }
+
+    .paper-title {
+      font-size: 13px;
+      font-weight: bold;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .paper-authors { font-size: 10px; color: #333; margin-bottom: 2px; }
+    .paper-affil   { font-size: 9px; color: #666; margin-bottom: 8px; font-style: italic; }
+    .paper-doi     { font-size: 8.5px; color: #1a5276; margin-bottom: 10px; }
+
+    .paper-section {
+      font-size: 9.5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 8px 0 3px;
+    }
+
+    .paper-text {
+      font-size: 10px;
+      line-height: 1.65;
+      color: #222;
+      text-align: justify;
+    }
+
+    .paper-mark { background: #fff3cd; }
+
+    .paper-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.5px;
+      margin: 6px 0;
+    }
+
+    .paper-table th {
+      border-bottom: 1px solid #000;
+      border-top: 1px solid #000;
+      padding: 2px 4px;
+      text-align: left;
+      font-size: 9px;
+    }
+
+    .paper-table td { padding: 2px 4px; border-bottom: 1px solid #ddd; }
+
+    /* ── FEMA Alert popup ───────────────────────────────────── */
+
+    .chaos-alert {
+      position: absolute;
+      top: 30%; left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      width: 300px;
+      background: #12122a;
+      border: 2px solid #e63946;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      font-size: 10.5px;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.95);
+    }
+
+    .alert-hdr {
+      background: #e63946;
+      padding: 7px 12px;
+      font-size: 11.5px;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .alert-body { padding: 10px 12px; }
+
+    .alert-row {
+      display: flex;
+      margin-bottom: 4px;
+      gap: 6px;
+    }
+
+    .alert-key { color: #9eb3cc; min-width: 110px; flex-shrink: 0; }
+    .alert-val { color: #fff; font-weight: 500; }
+
+    .alert-foot {
+      display: flex;
+      gap: 8px;
+      padding: 6px 12px 8px;
+      border-top: 1px solid #2a2a4a;
+      justify-content: flex-end;
+    }
+
+    .alert-btn {
+      background: #e63946;
+      color: #fff;
+      border: none;
+      padding: 4px 14px;
+      font-size: 10.5px;
+      font-family: Arial, sans-serif;
+      cursor: default;
+    }
+
+    .alert-btn-ghost {
+      background: transparent;
+      color: #777;
+      border: 1px solid #444;
+      padding: 4px 14px;
+      font-size: 10.5px;
+      font-family: Arial, sans-serif;
+      cursor: default;
+    }
+
+    /* ── News ticker ────────────────────────────────────────── */
+
+    .chaos-ticker {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 26px;
+      z-index: 30;
+      background: #b50000;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      border-top: 2px solid #ff1111;
+    }
+
+    .ticker-label {
+      flex-shrink: 0;
+      background: #fff;
+      color: #b50000;
+      font-family: Arial, sans-serif;
+      font-weight: 900;
+      font-size: 10px;
+      padding: 0 12px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.08em;
+    }
+
+    .ticker-text {
+      font-family: Arial, sans-serif;
+      font-size: 10.5px;
+      color: #fff;
+      white-space: nowrap;
+      animation: ticker-scroll 50s linear infinite;
+      padding-left: 60px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Section 3: Product Intro ───────────────────────────── */
+
+    #section-product {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111;
+    }
+
+    .product-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6vw;
+      padding: 4rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .product-logo {
+      flex: 0 0 auto;
+      width: clamp(140px, 20vw, 260px);
+    }
+
+    .product-logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      min-height: 120px;
+      background: #333; /* placeholder color when logo is missing */
+    }
+
+    .product-text { flex: 1; color: #fff; }
+
+    #product-name {
+      font-size: clamp(2rem, 5vw, 5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 1rem;
+    }
+
+    #product-tagline {
+      font-size: clamp(1rem, 1.8vw, 1.4rem);
+      font-weight: 300;
+      color: #aaa;
+      margin-bottom: 1.5rem;
+    }
+
+    #product-desc {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #777;
+      max-width: 480px;
+    }
+
+    /* ── Section 4: Stats Placeholder ──────────────────────── */
+
+    #section-stats {
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: 1.5rem;
+      padding: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat-card {
+      background: #252525;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 2.5rem 3rem;
+      text-align: center;
+      min-width: 200px;
+    }
+
+    .stat-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .stat-value {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    IMAGES FOLDER STRUCTURE
+    Drop your assets here — CONFIG paths below point to these files.
+
+    /images/
+      └── logo.png    → CONFIG.logo
+  -->
+
+  <div id="fullpage">
+
+    <!-- ── Section 1: Date Screen ─────────────────────────── -->
+    <div class="section" id="section-date">
+      <div id="date-display">
+        <span id="date-text"></span><span id="date-cursor">_</span>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Information Overload ───────────────────
+         Agricultural disaster data — Camp Fire, Nov 8 2018    -->
+    <div class="section" id="section-grid">
+
+      <!-- Window 1: USDA NASS — crop data table (auto-scroll) -->
+      <div class="chaos-win" id="w-usda">
+        <div class="win-chrome">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <div class="win-url">https://quickstats.nass.usda.gov/results/D1F0B3C8-27C4-3B08-B9F5-CA2BAFCA | CALIFORNIA CROPS &amp; PLANTS | BUTTE COUNTY | 2017–2018</div>
+        </div>
+        <div class="win-body usda-body">
+          <div class="win-scroll">
+            <h3>CALIFORNIA AGRICULTURAL STATISTICS — BUTTE COUNTY</h3>
+            <p class="usda-meta">Survey: All Crops &amp; Plants &nbsp;|&nbsp; State: California &nbsp;|&nbsp; County: Butte &nbsp;|&nbsp; Period: 2017–2018 &nbsp;|&nbsp; Retrieved: 2018-11-08 09:03 PST</p>
+            <table class="usda-table">
+              <tr><th>COMMODITY</th><th>YR</th><th>UNIT DESC</th><th>VALUE</th><th>CV%</th><th>NOTE</th></tr>
+              <tr><td>ALMONDS</td><td>2018</td><td>LB / ACRE</td><td>2,240</td><td>4.2</td><td>[PRELIM]</td></tr>
+              <tr><td>ALMONDS</td><td>2017</td><td>LB / ACRE</td><td>2,890</td><td>3.1</td><td></td></tr>
+              <tr><td>ALMONDS, PRODUCTION</td><td>2018</td><td>$ / LB</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>WALNUTS</td><td>2018</td><td>LB / ACRE</td><td>1,740</td><td>5.8</td><td>[PRELIM]</td></tr>
+              <tr><td>WALNUTS</td><td>2017</td><td>LB / ACRE</td><td>2,105</td><td>4.4</td><td></td></tr>
+              <tr><td>RICE</td><td>2018</td><td>ACRES HARVESTED</td><td>34,200</td><td>2.1</td><td>[PRELIM]</td></tr>
+              <tr><td>RICE</td><td>2017</td><td>ACRES HARVESTED</td><td>41,800</td><td>1.8</td><td></td></tr>
+              <tr><td>RICE, PRODUCTION</td><td>2018</td><td>$ MILLION</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>WHEAT, WINTER</td><td>2018</td><td>BU / ACRE</td><td>52</td><td>6.3</td><td>[PRELIM]</td></tr>
+              <tr><td>OLIVES, TABLE</td><td>2018</td><td>TONS</td><td>(NA)</td><td>—</td><td></td></tr>
+              <tr><td>PRUNES, DRIED</td><td>2018</td><td>LB / ACRE</td><td>3,610</td><td>8.1</td><td>[PRELIM]</td></tr>
+              <tr><td>CORN, GRAIN</td><td>2018</td><td>BU / ACRE</td><td>189</td><td>3.4</td><td>[PRELIM]</td></tr>
+              <tr><td>PEACHES</td><td>2018</td><td>LB / ACRE</td><td>(L)</td><td>—</td><td></td></tr>
+              <tr><td>SUNFLOWER</td><td>2018</td><td>LB / ACRE</td><td>1,490</td><td>12.3</td><td>[PRELIM]</td></tr>
+              <tr><td>HAY, ALFALFA</td><td>2018</td><td>TONS / ACRE</td><td>7.1</td><td>2.8</td><td>[PRELIM]</td></tr>
+              <tr><td>OATS</td><td>2018</td><td>BU / ACRE</td><td>68</td><td>7.9</td><td></td></tr>
+              <tr><td>PASTURE &amp; RANGE</td><td>2018</td><td>$ / ACRE</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>VEGETABLES, OTHER</td><td>2018</td><td>ACRES</td><td>1,240</td><td>9.1</td><td>[PRELIM]</td></tr>
+            </table>
+            <p class="usda-note">Source: USDA National Agricultural Statistics Service. [D] = Withheld to avoid disclosing data for individual operations. (NA) = Not Available. (L) = Less than half the unit shown. CV% = Coefficient of Variation.</p>
+            <br>
+            <!-- duplicate for seamless loop -->
+            <h3>CALIFORNIA AGRICULTURAL STATISTICS — BUTTE COUNTY</h3>
+            <p class="usda-meta">Survey: All Crops &amp; Plants &nbsp;|&nbsp; State: California &nbsp;|&nbsp; County: Butte &nbsp;|&nbsp; Period: 2017–2018 &nbsp;|&nbsp; Retrieved: 2018-11-08 09:03 PST</p>
+            <table class="usda-table">
+              <tr><th>COMMODITY</th><th>YR</th><th>UNIT DESC</th><th>VALUE</th><th>CV%</th><th>NOTE</th></tr>
+              <tr><td>ALMONDS</td><td>2018</td><td>LB / ACRE</td><td>2,240</td><td>4.2</td><td>[PRELIM]</td></tr>
+              <tr><td>ALMONDS</td><td>2017</td><td>LB / ACRE</td><td>2,890</td><td>3.1</td><td></td></tr>
+              <tr><td>ALMONDS, PRODUCTION</td><td>2018</td><td>$ / LB</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>WALNUTS</td><td>2018</td><td>LB / ACRE</td><td>1,740</td><td>5.8</td><td>[PRELIM]</td></tr>
+              <tr><td>WALNUTS</td><td>2017</td><td>LB / ACRE</td><td>2,105</td><td>4.4</td><td></td></tr>
+              <tr><td>RICE</td><td>2018</td><td>ACRES HARVESTED</td><td>34,200</td><td>2.1</td><td>[PRELIM]</td></tr>
+              <tr><td>RICE</td><td>2017</td><td>ACRES HARVESTED</td><td>41,800</td><td>1.8</td><td></td></tr>
+              <tr><td>RICE, PRODUCTION</td><td>2018</td><td>$ MILLION</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>WHEAT, WINTER</td><td>2018</td><td>BU / ACRE</td><td>52</td><td>6.3</td><td>[PRELIM]</td></tr>
+              <tr><td>OLIVES, TABLE</td><td>2018</td><td>TONS</td><td>(NA)</td><td>—</td><td></td></tr>
+              <tr><td>PRUNES, DRIED</td><td>2018</td><td>LB / ACRE</td><td>3,610</td><td>8.1</td><td>[PRELIM]</td></tr>
+              <tr><td>CORN, GRAIN</td><td>2018</td><td>BU / ACRE</td><td>189</td><td>3.4</td><td>[PRELIM]</td></tr>
+              <tr><td>PEACHES</td><td>2018</td><td>LB / ACRE</td><td>(L)</td><td>—</td><td></td></tr>
+              <tr><td>SUNFLOWER</td><td>2018</td><td>LB / ACRE</td><td>1,490</td><td>12.3</td><td>[PRELIM]</td></tr>
+              <tr><td>HAY, ALFALFA</td><td>2018</td><td>TONS / ACRE</td><td>7.1</td><td>2.8</td><td>[PRELIM]</td></tr>
+              <tr><td>OATS</td><td>2018</td><td>BU / ACRE</td><td>68</td><td>7.9</td><td></td></tr>
+              <tr><td>PASTURE &amp; RANGE</td><td>2018</td><td>$ / ACRE</td><td>[D]</td><td>—</td><td>WITHHELD</td></tr>
+              <tr><td>VEGETABLES, OTHER</td><td>2018</td><td>ACRES</td><td>1,240</td><td>9.1</td><td>[PRELIM]</td></tr>
+            </table>
+            <p class="usda-note">Source: USDA National Agricultural Statistics Service. [D] = Withheld to avoid disclosing data for individual operations. (NA) = Not Available. (L) = Less than half the unit shown. CV% = Coefficient of Variation.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Window 2: EPA AirNow — AQI Hazardous (shaking) -->
+      <div class="chaos-win" id="w-epa">
+        <div class="win-chrome">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <div class="win-url">https://www.airnow.gov/index.cfm?action=airnow.local_city&cityid=2098&param=PM25&aqitype=aqi</div>
+        </div>
+        <div class="win-body epa-body">
+          <div class="epa-header">AirNow.gov &nbsp;|&nbsp; Air Quality Index</div>
+          <div class="epa-location">Paradise, CA &nbsp;—&nbsp; Nov 8, 2018 &nbsp;11:00 AM</div>
+          <div class="epa-aqi-box">
+            <div class="epa-aqi-num">505</div>
+            <div class="epa-aqi-label">Hazardous</div>
+            <div class="epa-aqi-sub">Health Alert: Everyone is affected</div>
+          </div>
+          <table class="epa-table">
+            <tr><td>Pollutant</td><td>PM2.5 (Fine Particles)</td></tr>
+            <tr><td>Concentration</td><td>999.9 µg/m³</td></tr>
+            <tr><td>24-hr Standard</td><td>35.0 µg/m³</td></tr>
+            <tr><td>Reporting Station</td><td>BCAQMD — Paradise #1</td></tr>
+            <tr><td>Station Status</td><td class="epa-offline">⚠ OFFLINE since 09:42 PST</td></tr>
+            <tr><td>Fallback Source</td><td>MODIS Satellite AOD Estimate</td></tr>
+            <tr><td>Forecast (Tomorrow)</td><td class="epa-offline">HAZARDOUS</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Window 3: NWS Fire Weather Alert -->
+      <div class="chaos-win" id="w-nws">
+        <div class="win-chrome">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <div class="win-url">https://forecast.weather.gov/showsigwx.php?warnzone=CAZ066&warncounty=CAC007&firewx=1&wfo=STO</div>
+        </div>
+        <div class="win-body nws-body">
+<div class="nws-urgent">URGENT — FIRE WEATHER MESSAGE</div>NATIONAL WEATHER SERVICE SACRAMENTO CA
+648 AM PST THU NOV 08 2018
+
+...RED FLAG WARNING IN EFFECT THROUGH 6 PM PST FRIDAY
+FOR PORTIONS OF NORTHERN CALIFORNIA...
+
+<span class="nws-bold">* AFFECTED AREA...NORTHERN SACRAMENTO VALLEY INCLUDING
+  BUTTE...COLUSA...GLENN AND TEHAMA COUNTIES.</span>
+
+<span class="nws-bold">* WIND...N 35 TO 45 MPH WITH GUSTS TO 65 MPH.</span>
+<span class="nws-bold">* RELATIVE HUMIDITY...7 TO 13 PERCENT.</span>
+<span class="nws-bold">* TEMPERATURE...77 TO 87 DEGREES F.</span>
+
+PRECAUTIONARY/PREPAREDNESS ACTIONS...
+
+A RED FLAG WARNING MEANS THAT CRITICAL FIRE WEATHER
+CONDITIONS ARE EITHER IMMINENT OR OCCURRING. RAPID FIRE
+SPREAD AND EXTREME FIRE BEHAVIOR IS POSSIBLE. ALL BURNING
+IS STRONGLY DISCOURAGED. HAVE EVACUATION PLANS READY.
+
+&&
+END</div>
+      </div>
+
+      <!-- Window 4: Terminal — data download in progress -->
+      <div class="chaos-win" id="w-term">
+        <div class="term-chrome">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <span class="term-title">bash — 80×24 — fernanda@macbook-pro</span>
+        </div>
+        <div class="win-body term-body"><span class="t-prompt">fernanda@macbook-pro</span><span class="t-dim">:</span><span class="t-prompt">~</span><span class="t-dim"> % </span><span class="t-cmd">wget "https://data.usgs.gov/hazards/qfaults/api?type=FeatureCollection&state=CA"</span>
+<span class="t-out">--2018-11-08 09:12:33--  https://data.usgs.gov/hazards/qfaults/api...</span>
+<span class="t-out">Resolving data.usgs.gov... 96.127.4.88</span>
+<span class="t-out">Connecting... connected. HTTP request sent.</span>
+<span class="t-out">200 OK  |  Saving to: 'qfaults.json'</span>
+<span class="t-out">████████████████░░░░░░░░  67%  28.3M/42.1M  184KB/s  eta 1m14s</span>
+<span class="t-prompt">fernanda@macbook-pro</span><span class="t-dim"> % </span><span class="t-cmd">python3 parse_aqi.py --date 2018-11-08 --county butte</span>
+<span class="t-out">Loading EPA AQS hourly data...</span>
+<span class="t-err">ERROR: Station 060070008 offline since 08:42 PST</span>
+<span class="t-warn">WARNING: Falling back to MODIS satellite AOD proxy</span>
+<span class="t-warn">WARNING: Cloud cover 34% — data may be unreliable</span>
+<span class="t-out">Records processed: 0</span>
+<span class="t-err">Retrying... (1/5) </span><span class="t-cursor"></span></div>
+      </div>
+
+      <!-- Window 5: Academic paper (slow scroll) -->
+      <div class="chaos-win" id="w-paper">
+        <div class="win-chrome">
+          <div class="win-dots"><span></span><span></span><span></span></div>
+          <div class="win-url">https://ageconsearch.umn.edu/record/290734/files/chen-martinez-singh-2019-campfire-ag-productivity.pdf</div>
+        </div>
+        <div class="win-body paper-body">
+          <div class="win-scroll" style="animation-duration: 55s;">
+            <p class="paper-title">Agricultural Productivity Losses from Wildfire Smoke: Evidence from the 2018 Camp Fire</p>
+            <p class="paper-authors">Chen, L. &nbsp;· &nbsp;Martinez, R. &nbsp;· &nbsp;Singh, A. K.</p>
+            <p class="paper-affil">UC Davis, Department of Agricultural &amp; Resource Economics; NBER Working Paper No. 26901</p>
+            <p class="paper-doi">DOI: 10.3386/w26901 &nbsp;|&nbsp; Submitted: March 2019 &nbsp;|&nbsp; Status: Under Review</p>
+
+            <p class="paper-section">Abstract</p>
+            <p class="paper-text">We estimate agricultural productivity losses attributable to fine particulate matter (PM2.5) exposure during the November 2018 Camp Fire — the most destructive wildfire event in California history. Using a difference-in-differences framework applied to <span class="paper-mark">USDA-NASS survey data</span> for Butte, Glenn, Colusa, and Tehama counties (n = 2,841 farms), we find that <span class="paper-mark">almond yields declined 22.4% (p &lt; 0.001)</span> and walnut yields declined 17.8% (p &lt; 0.01) in the 2018 harvest season relative to the synthetic control. Rice acreage harvested fell 18.2%, consistent with early field abandonment due to equipment failure and labor displacement. Total estimated losses amount to <span class="paper-mark">$184.6 million (2018 USD)</span> in direct crop value, with multiplier effects yielding a regional economic loss of $312.1 million. We document a strong dose-response relationship between cumulative AOD exposure (NASA MODIS Terra) and yield loss across commodities, with elasticity estimates ranging from −0.31 to −0.58. These findings have direct implications for federal crop insurance actuarial risk models and USDA emergency loan eligibility criteria.</p>
+
+            <p class="paper-section">1. Introduction</p>
+            <p class="paper-text">The Camp Fire ignited on the morning of November 8, 2018, in Butte County, California, driven by sustained north winds of 35–65 mph and relative humidity as low as 7%. Within hours, it had destroyed the town of Paradise and generated a smoke plume visible from space. The Butte County Agricultural Commissioner's office reported that the fire burned through or directly adjacent to approximately 153,000 acres of crop and rangeland, while residual smoke affected over 2.3 million acres of California's Central Valley during the critical late-harvest period for tree nuts and field crops.</p>
+
+            <p class="paper-section">Table 1 — Summary Statistics</p>
+            <table class="paper-table">
+              <tr><th>Variable</th><th>N</th><th>Mean</th><th>SD</th><th>Source</th></tr>
+              <tr><td>Almond yield (lb/acre)</td><td>412</td><td>2,240</td><td>318</td><td>NASS</td></tr>
+              <tr><td>Walnut yield (lb/acre)</td><td>287</td><td>1,740</td><td>291</td><td>NASS</td></tr>
+              <tr><td>PM2.5 (µg/m³, peak)</td><td>—</td><td>504.6</td><td>122.4</td><td>EPA AQS</td></tr>
+              <tr><td>AOD (MODIS Terra)</td><td>—</td><td>2.31</td><td>0.84</td><td>NASA</td></tr>
+            </table>
+
+            <!-- duplicate for seamless loop -->
+            <p class="paper-title" style="margin-top:16px">Agricultural Productivity Losses from Wildfire Smoke: Evidence from the 2018 Camp Fire</p>
+            <p class="paper-authors">Chen, L. &nbsp;· &nbsp;Martinez, R. &nbsp;· &nbsp;Singh, A. K.</p>
+            <p class="paper-affil">UC Davis, Department of Agricultural &amp; Resource Economics; NBER Working Paper No. 26901</p>
+            <p class="paper-doi">DOI: 10.3386/w26901 &nbsp;|&nbsp; Submitted: March 2019 &nbsp;|&nbsp; Status: Under Review</p>
+            <p class="paper-section">Abstract</p>
+            <p class="paper-text">We estimate agricultural productivity losses attributable to fine particulate matter (PM2.5) exposure during the November 2018 Camp Fire — the most destructive wildfire event in California history. Using a difference-in-differences framework applied to <span class="paper-mark">USDA-NASS survey data</span> for Butte, Glenn, Colusa, and Tehama counties (n = 2,841 farms), we find that <span class="paper-mark">almond yields declined 22.4% (p &lt; 0.001)</span> and walnut yields declined 17.8% (p &lt; 0.01) in the 2018 harvest season relative to the synthetic control. Rice acreage harvested fell 18.2%, consistent with early field abandonment due to equipment failure and labor displacement. Total estimated losses amount to <span class="paper-mark">$184.6 million (2018 USD)</span> in direct crop value, with multiplier effects yielding a regional economic loss of $312.1 million.</p>
+            <p class="paper-section">1. Introduction</p>
+            <p class="paper-text">The Camp Fire ignited on the morning of November 8, 2018, in Butte County, California, driven by sustained north winds of 35–65 mph and relative humidity as low as 7%. Within hours, it had destroyed the town of Paradise and generated a smoke plume visible from space.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEMA Alert popup -->
+      <div class="chaos-alert">
+        <div class="alert-hdr">⚠&nbsp; FEMA MAJOR DISASTER DECLARATION</div>
+        <div class="alert-body">
+          <div class="alert-row"><span class="alert-key">Declaration No.</span><span class="alert-val">DR-4407-CA</span></div>
+          <div class="alert-row"><span class="alert-key">State</span><span class="alert-val">California</span></div>
+          <div class="alert-row"><span class="alert-key">Incident Type</span><span class="alert-val">Fire (Camp Fire)</span></div>
+          <div class="alert-row"><span class="alert-key">Declaration Date</span><span class="alert-val">November 12, 2018</span></div>
+          <div class="alert-row"><span class="alert-key">Designated Areas</span><span class="alert-val">Butte, Los Angeles, Ventura</span></div>
+          <div class="alert-row"><span class="alert-key">IA Program</span><span class="alert-val">Individual Assistance — Open</span></div>
+          <div class="alert-row"><span class="alert-key">PA Program</span><span class="alert-val">Public Assistance — Open</span></div>
+        </div>
+        <div class="alert-foot">
+          <button class="alert-btn-ghost">Dismiss</button>
+          <button class="alert-btn">Register for Assistance</button>
+        </div>
+      </div>
+
+      <!-- News ticker -->
+      <div class="chaos-ticker">
+        <div class="ticker-label">BREAKING</div>
+        <div class="ticker-text">CAMP FIRE: 153,336 ACRES BURNED &nbsp;●&nbsp; 85 FATALITIES CONFIRMED &nbsp;●&nbsp; 18,804 STRUCTURES DESTROYED &nbsp;●&nbsp; AQI HAZARDOUS ACROSS NORTHERN CALIFORNIA THROUGH FRIDAY &nbsp;●&nbsp; USDA SECRETARIAL DISASTER DESIGNATION APPROVED FOR BUTTE COUNTY &nbsp;●&nbsp; PARADISE, MAGALIA, CONCOW UNDER MANDATORY EVACUATION ORDER &nbsp;●&nbsp; USDA FARM SERVICE AGENCY EMERGENCY LOAN APPLICATIONS NOW OPEN &nbsp;●&nbsp; CAMP FIRE NOW MOST DESTRUCTIVE WILDFIRE IN CALIFORNIA HISTORY &nbsp;●&nbsp; BCAQMD STATION 060070008 OFFLINE — SATELLITE DATA IN USE &nbsp;●&nbsp; NOAA RED FLAG WARNING CONTINUES THROUGH 6 PM FRIDAY</div>
+      </div>
+
+    </div><!-- /#section-grid -->
+
+    <!-- ── Section 3: Product Intro ───────────────────────── -->
+    <div class="section" id="section-product">
+      <div class="product-layout">
+        <div class="product-logo">
+          <img id="product-logo-img" alt="Logo" loading="lazy">
+        </div>
+        <div class="product-text">
+          <h1 id="product-name"></h1>
+          <h2 id="product-tagline"></h2>
+          <p id="product-desc"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Stats Placeholder ───────────────────── -->
+    <!-- REPLACE: stats content goes here -->
+    <div class="section" id="section-stats">
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="stat-title">Stat Title</div>
+          <div class="stat-value">000</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Stat Title</div>
+          <div class="stat-value">000</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Stat Title</div>
+          <div class="stat-value">000</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#fullpage -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.js" defer></script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // EDITABLE CONFIG — all swappable values live here
+    // ═══════════════════════════════════════════════════════════
+    const CONFIG = {
+      /* EDITABLE */ date:          "November 8, 2018",
+      /* EDITABLE */ typewriterMs:  80,        // ms per character
+      /* EDITABLE */ logo:          "images/logo.png",
+      /* EDITABLE */ productName:   "Mooch",
+      /* EDITABLE */ tagline:       "Track every dollar, effortlessly.",
+      /* EDITABLE */ description:   "Mooch is the modern way to manage shared expenses. Simple, fast, and fair.",
+    };
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // ── Section 3 & 4 bindings ──────────────────────────────
+      document.getElementById("product-logo-img").src             = CONFIG.logo;
+      document.getElementById("product-name").textContent         = CONFIG.productName;
+      document.getElementById("product-tagline").textContent      = CONFIG.tagline;
+      document.getElementById("product-desc").textContent         = CONFIG.description;
+
+      // ── Init fullPage.js ─────────────────────────────────────
+      new fullpage("#fullpage", {
+        scrollOverflow: false,
+        autoScrolling:  true,
+        fitToSection:   true,
+
+        // Typewriter fires each time Section 1 becomes active
+        afterLoad: function (origin, destination) {
+          if (destination.index !== 0) return;
+          const el     = document.getElementById("date-text");
+          const text   = CONFIG.date;
+          let i = 0;
+          el.textContent = "";
+          const timer = setInterval(function () {
+            el.textContent = text.slice(0, ++i);
+            if (i >= text.length) clearInterval(timer);
+          }, CONFIG.typewriterMs);
+        },
+      });
+    });
+  </script>
+
+</body>
+</html>
