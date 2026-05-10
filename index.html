@@ -6,6 +6,9 @@
   <title>HD26</title>
 
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/3.1.2/fullpage.min.css">
 
   <style>
@@ -655,101 +658,559 @@
       letter-spacing: 0.03em;
     }
 
-    /* ── Section 3: Product Intro ───────────────────────────── */
+    /* ══ Section 3: Introduce Mooch — pitch-deck layout ══════
+       Branding tokens (use only these — keep palette tight):
+         --m-bg-deep   #1f3329  base canvas
+         --m-bg        #2d4a3c  sage panel
+         --m-bg-soft   #4d7a65  light sage
+         --m-amber     #f4a261  signature accent (period, LIVE, alerts)
+         --m-water     #4ea7d8  used only inside the map preview
+         --m-crop      #ffd25a  used only inside the map preview
+    ─────────────────────────────────────────────────────────── */
 
     #section-product {
+      --m-bg-deep: #1f3329;
+      --m-bg:      #2d4a3c;
+      --m-bg-soft: #4d7a65;
+      --m-amber:   #f4a261;
+      --m-water:   #4ea7d8;
+      --m-crop:    #ffd25a;
+
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #B7D4F2;
+      background: var(--m-bg);
+      padding: 3rem 2.5rem;
+      color: #fff;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      overflow: hidden;
     }
 
-    .product-layout {
+    /* Atmospheric warm glow + cool corner shadow + topographic line texture. */
+    #section-product::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 45% 40% at 78% 28%, rgba(244, 162, 97, 0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 50% at 12% 92%, rgba(15, 30, 24, 0.55) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    #section-product::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(118deg,
+          transparent 0, transparent 38px,
+          rgba(255, 255, 255, 0.025) 38px, rgba(255, 255, 255, 0.025) 39px),
+        repeating-linear-gradient(28deg,
+          transparent 0, transparent 60px,
+          rgba(255, 255, 255, 0.018) 60px, rgba(255, 255, 255, 0.018) 61px);
+      pointer-events: none;
+    }
+
+    .mooch-grid {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1320px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    /* ── Topbar: badge left, LIVE indicator right ──────────── */
+
+    .mooch-topbar {
       display: flex;
-      flex-direction: row;
       align-items: center;
-      gap: 6vw;
-      padding: 4rem;
-      max-width: 1200px;
-      width: 100%;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
-    .product-logo {
-      flex: 0 0 auto;
-      width: clamp(140px, 20vw, 260px);
+    .mooch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.74rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #fff;
+      margin: 0;
     }
 
-    .product-logo img {
-      width: 100%;
+    .mooch-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .mooch-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--m-amber);
+      margin: 0;
+    }
+
+    .mooch-live::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--m-amber);
+      box-shadow: 0 0 12px var(--m-amber);
+      animation: live-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    /* ── Main: 5/7 split — text left, live map right ──────── */
+
+    .mooch-main {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 2.25rem;
+      align-items: stretch;
+    }
+
+    .mooch-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      justify-content: center;
+    }
+
+    .mooch-logo {
+      width: clamp(48px, 5vw, 64px);
       height: auto;
       display: block;
-      min-height: 120px;
-      background: #333; /* placeholder color when logo is missing */
+      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.3));
     }
 
-    .product-text { flex: 1; color: #fff; }
-
-    #product-name {
-      font-size: clamp(2rem, 5vw, 5rem);
+    .mooch-name {
+      font-size: clamp(4rem, 9vw, 8.5rem);
       font-weight: 700;
-      line-height: 1.05;
-      margin-bottom: 1rem;
+      line-height: 0.85;
+      letter-spacing: -0.055em;
+      margin: 0;
+      color: #fff;
     }
 
-    #product-tagline {
-      font-size: clamp(1rem, 1.8vw, 1.4rem);
-      font-weight: 300;
-      color: #aaa;
-      margin-bottom: 1.5rem;
+    .mooch-name .period {
+      color: var(--m-amber);
     }
 
-    #product-desc {
-      font-size: 1rem;
-      line-height: 1.8;
-      color: #777;
-      max-width: 480px;
+    .mooch-tagline {
+      font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+      font-weight: 400;
+      letter-spacing: -0.008em;
+      line-height: 1.5;
+      color: #fff;
+      margin: 0;
+      max-width: 460px;
     }
 
-    /* ── Section 4: Stats Placeholder ──────────────────────── */
-
-    #section-stats {
-      background: #B7D4F2;
+    .mooch-source-row {
       display: flex;
       align-items: center;
-      justify-content: center;
-    }
-
-    .stats-container {
-      display: flex;
-      gap: 1.5rem;
-      padding: 2rem;
       flex-wrap: wrap;
-      justify-content: center;
+      gap: 0.45rem;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.72rem;
+      list-style: none;
+      padding: 0;
+      margin: 0.25rem 0 0;
     }
 
-    .stat-card {
-      background: #252525;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 2.5rem 3rem;
-      text-align: center;
-      min-width: 200px;
-    }
-
-    .stat-title {
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: #666;
-      margin-bottom: 1rem;
-    }
-
-    .stat-value {
-      font-size: 3.5rem;
-      font-weight: 700;
+    .mooch-source-row .src {
+      padding: 0.35rem 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
+    }
+
+    .mooch-source-row .src-arrow {
+      color: #fff;
+      padding: 0 0.15rem;
+    }
+
+    .mooch-source-row .src-out {
+      padding: 0.35rem 0.7rem;
+      border-radius: 5px;
+      background: var(--m-amber);
+      color: var(--m-bg-deep);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Live MapKit-style preview (the killer visual) ─────── */
+
+    .mooch-map {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--m-bg-deep);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      display: flex;
+      flex-direction: column;
+      min-height: 380px;
+    }
+
+    .map-chrome {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.66rem;
+      color: rgba(255, 255, 255, 0.88);
+      flex-shrink: 0;
+    }
+
+    .map-coords {
+      letter-spacing: 0.04em;
+      flex: 1;
+    }
+
+    .map-coords b {
+      color: var(--m-amber);
+      font-weight: 500;
+    }
+
+    .map-toggles {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .map-toggles span {
+      padding: 0.18rem 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.05);
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.6rem;
+    }
+
+    .map-toggles span.on {
+      background: var(--m-amber);
+      border-color: var(--m-amber);
+      color: var(--m-bg-deep);
+      font-weight: 700;
+    }
+
+    .map-canvas {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 70% 55% at 38% 60%, #355c47 0%, #1e3a2c 55%, #122922 100%);
+    }
+
+    /* topographic contour rings */
+    .map-canvas::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-radial-gradient(circle at 38% 62%,
+          transparent 0, transparent 18px,
+          rgba(140, 200, 165, 0.07) 18px, rgba(140, 200, 165, 0.07) 19px),
+        repeating-radial-gradient(circle at 70% 40%,
+          transparent 0, transparent 22px,
+          rgba(140, 200, 165, 0.05) 22px, rgba(140, 200, 165, 0.05) 23px);
+    }
+
+    /* river running diagonally — passes near the farm */
+    .map-canvas::after {
+      content: '';
+      position: absolute;
+      left: 16%; top: -4%;
+      width: 5px; height: 110%;
+      background: linear-gradient(180deg, #2c6b8c 0%, #1a4a66 100%);
+      border-radius: 50%;
+      transform: rotate(-12deg);
+      opacity: 0.55;
+      box-shadow: 0 0 8px rgba(78, 167, 216, 0.4);
+    }
+
+    .map-fire {
+      position: absolute;
+      top: 18%; left: 30%;
+      width: 32%; height: 42%;
+      border: 2px solid rgba(244, 90, 40, 0.7);
+      border-radius: 48% 52% 42% 58% / 50% 45% 55% 50%;
+      background: radial-gradient(ellipse,
+        rgba(244, 90, 40, 0.22) 0%,
+        rgba(244, 90, 40, 0.08) 60%,
+        transparent 80%);
+      animation: fire-glow 3.5s ease-in-out infinite;
+    }
+
+    @keyframes fire-glow {
+      0%, 100% { box-shadow: 0 0 30px rgba(244, 90, 40, 0.35); }
+      50%       { box-shadow: 0 0 55px rgba(244, 90, 40, 0.6); }
+    }
+
+    .map-fire-dot {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ff8a3d 0%, #cc2b00 70%, transparent 100%);
+      box-shadow: 0 0 10px rgba(255, 90, 0, 0.7);
+      animation: live-pulse 1.8s ease-in-out infinite;
+    }
+
+    .map-farm {
+      position: absolute;
+      bottom: 22%; right: 18%;
+      width: 19%; height: 16%;
+      border: 1.5px dashed var(--m-crop);
+      background: rgba(255, 210, 90, 0.08);
+      border-radius: 3px;
+    }
+
+    .map-farm::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background:
+        repeating-linear-gradient(0deg,
+          transparent 0, transparent 4px,
+          rgba(255, 210, 90, 0.18) 4px, rgba(255, 210, 90, 0.18) 5px);
+    }
+
+    .map-water-pin {
+      position: absolute;
+      bottom: 36%; left: 19%;
+      width: 14px; height: 14px;
+      border-radius: 50% 50% 50% 0;
+      background: var(--m-water);
+      transform: rotate(-45deg);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 12px rgba(78, 167, 216, 0.5);
+    }
+
+    .map-water-pin::after {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    /* smoke / ash drift cone from fire toward farm */
+    .map-ash {
+      position: absolute;
+      top: 30%; left: 48%;
+      width: 36%; height: 30%;
+      background: radial-gradient(ellipse at 0% 50%,
+        rgba(180, 180, 180, 0.30) 0%,
+        rgba(180, 180, 180, 0.10) 50%,
+        transparent 80%);
+      transform: rotate(18deg);
+      pointer-events: none;
+    }
+
+    .callout {
+      position: absolute;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.02em;
+      background: rgba(15, 25, 22, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 0.28rem 0.55rem;
+      color: #fff;
+      border-radius: 4px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .callout b {
+      font-weight: 600;
+    }
+
+    .callout.fire  { top: 6%;   left: 28%; color: #ff9b65; border-color: rgba(244, 90, 40, 0.55); }
+    .callout.farm  { bottom: 8%; right: 6%; color: var(--m-crop); border-color: rgba(255, 210, 90, 0.5); }
+    .callout.water { bottom: 32%; left: 3%; color: var(--m-water); border-color: rgba(78, 167, 216, 0.5); }
+
+    .map-action {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0.65rem 0.85rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.55) 60%);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.7rem;
+      color: #fff;
+    }
+
+    .map-action .alert-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--m-amber);
+      color: var(--m-bg-deep);
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .map-action .alert-pill::before {
+      content: '⚠';
+      font-size: 0.85rem;
+    }
+
+    /* ── Fact tiles: 3 columns, amber accent border ────────── */
+
+    .mooch-facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .mooch-fact {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.85rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-left: 3px solid var(--m-amber);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .mooch-fact-num {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--m-amber);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .mooch-fact-text { flex: 1; }
+
+    .mooch-fact-src {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.6rem;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── Footer: kicker + closer chip ──────────────────────── */
+
+    .mooch-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .mooch-kicker {
+      font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.005em;
+      line-height: 1.5;
+      max-width: 600px;
+      margin: 0;
+    }
+
+    .mooch-kicker b {
+      color: var(--m-amber);
+      font-weight: 600;
+    }
+
+    .mooch-closer {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      color: #fff;
+      margin: 0;
+      flex-shrink: 0;
+    }
+
+    .mooch-closer .kbd {
+      font-family: 'JetBrains Mono', 'SF Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.12rem 0.4rem;
+      background: rgba(255, 255, 255, 0.20);
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      border-radius: 4px;
+      color: #fff;
+    }
+
+    #section-product :focus-visible {
+      outline: 2px solid var(--m-amber);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* Web-first: collapse split layout only on narrow viewports. */
+    @media (max-width: 960px) {
+      .mooch-main { grid-template-columns: 1fr; }
+      .mooch-map { min-height: 320px; }
+      .mooch-facts { grid-template-columns: 1fr; }
+      .mooch-footer { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
     }
 
     /* ── Window 1: CAL FIRE Incidents ──────────────────────── */
@@ -1080,38 +1541,86 @@
 
     </div><!-- /#section-grid -->
 
-    <!-- ── Section 3: Product Intro ───────────────────────── -->
-    <div class="section" id="section-product">
-      <div class="product-layout">
-        <div class="product-logo">
-          <img id="product-logo-img" alt="Logo" loading="lazy">
-        </div>
-        <div class="product-text">
-          <h1 id="product-name"></h1>
-          <h2 id="product-tagline"></h2>
-          <p id="product-desc"></p>
-        </div>
-      </div>
-    </div>
+    <!-- ── Section 3: Introduce Mooch ─────────────────────── -->
+    <section class="section" id="section-product" aria-labelledby="product-name">
+      <div class="mooch-grid">
 
-    <!-- ── Section 4: Stats Placeholder ───────────────────── -->
-    <!-- REPLACE: stats content goes here -->
-    <div class="section" id="section-stats">
-      <div class="stats-container">
-        <div class="stat-card">
-          <div class="stat-title">Stat Title</div>
-          <div class="stat-value">000</div>
+        <div class="mooch-topbar">
+          <p class="mooch-badge">v1.0 · the unified farm sentinel</p>
+          <p class="mooch-live" aria-label="Live data, Butte County, California">Butte Co. · CA</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-title">Stat Title</div>
-          <div class="stat-value">000</div>
+
+        <div class="mooch-main">
+
+          <header class="mooch-text">
+            <img id="product-logo-img" class="mooch-logo" alt="" loading="lazy">
+            <h1 id="product-name" class="mooch-name"></h1>
+            <p id="product-tagline" class="mooch-tagline"></p>
+            <ul class="mooch-source-row" aria-label="Live data sources">
+              <li class="src">CAL FIRE</li>
+              <li class="src">EPA</li>
+              <li class="src">USGS</li>
+              <li class="src">NASA FIRMS</li>
+              <li class="src-arrow" aria-hidden="true">→</li>
+              <li class="src-out">one view</li>
+            </ul>
+          </header>
+
+          <figure class="mooch-map" aria-label="Live map preview showing fire perimeter, your farm, water intake, and ash drift">
+            <div class="map-chrome">
+              <span class="map-coords">MOOCH · <b>38.7°N 121.6°W</b> · zoom 9</span>
+              <span class="map-toggles" aria-hidden="true">
+                <span class="on">Fire</span>
+                <span class="on">Water</span>
+                <span class="on">Ash</span>
+                <span>Crops</span>
+              </span>
+            </div>
+            <div class="map-canvas" aria-hidden="true">
+              <div class="map-fire"></div>
+              <div class="map-fire-dot" style="top:30%; left:42%;"></div>
+              <div class="map-fire-dot" style="top:38%; left:48%; animation-delay:0.4s;"></div>
+              <div class="map-fire-dot" style="top:46%; left:52%; animation-delay:0.8s;"></div>
+              <div class="map-ash"></div>
+              <div class="map-water-pin"></div>
+              <div class="map-farm"></div>
+              <span class="callout fire">🔥 <b>FIRE</b> 5.2mi NW · spreading</span>
+              <span class="callout water"><b>WATER</b> pressure ↓ 12%</span>
+              <span class="callout farm"><b>YOUR FARM</b> 40ac walnuts</span>
+            </div>
+            <div class="map-action">
+              <span class="alert-pill">ACT NOW</span>
+              <span>3 actions queued · ash in 2hr</span>
+            </div>
+          </figure>
+
         </div>
-        <div class="stat-card">
-          <div class="stat-title">Stat Title</div>
-          <div class="stat-value">000</div>
+
+        <ol class="mooch-facts" aria-label="What Mooch knows about your farm">
+          <li class="mooch-fact">
+            <span class="mooch-fact-num" aria-hidden="true">01</span>
+            <span class="mooch-fact-text">40 acres of walnuts</span>
+            <span class="mooch-fact-src">USDA</span>
+          </li>
+          <li class="mooch-fact">
+            <span class="mooch-fact-num" aria-hidden="true">02</span>
+            <span class="mooch-fact-text">upstream water intake</span>
+            <span class="mooch-fact-src">USGS</span>
+          </li>
+          <li class="mooch-fact">
+            <span class="mooch-fact-num" aria-hidden="true">03</span>
+            <span class="mooch-fact-text">ash on nut crops</span>
+            <span class="mooch-fact-src">EPA · NASA</span>
+          </li>
+        </ol>
+
+        <div class="mooch-footer">
+          <p class="mooch-kicker">Not just a map. Not just a feed. <b>Mooch tells you what to do next.</b></p>
+          <p class="mooch-closer">That's Mooch <span class="kbd" aria-hidden="true">↵</span></p>
         </div>
+
       </div>
-    </div>
+    </section>
 
   </div><!-- /#fullpage -->
 
@@ -1127,17 +1636,24 @@
       /* EDITABLE */ typewriterMs:  80,        // ms per character
       /* EDITABLE */ logo:          "images/logo.png",
       /* EDITABLE */ productName:   "Mooch",
-      /* EDITABLE */ tagline:       "Your farm's early warning system.",
-      /* EDITABLE */ description:   "Mooch pulls live data from CalFire, EPA, USGS, and NASA FIRMS to connect the dots before it's too late. It knows your crops, your water source, and your risk — and tells you exactly what to do next.",
+      /* EDITABLE */ tagline:       "One view of every threat to your farm — from the agencies that already see it.",
     };
 
     document.addEventListener("DOMContentLoaded", function () {
       // ── Static bindings ─────────────────────────────────────
       document.getElementById("date-text").textContent            = CONFIG.date;
       document.getElementById("product-logo-img").src             = CONFIG.logo;
-      document.getElementById("product-name").textContent         = CONFIG.productName;
+
+      // Product name: text + decorative amber period.
+      const nameEl = document.getElementById("product-name");
+      nameEl.textContent = CONFIG.productName;
+      const period = document.createElement("span");
+      period.className = "period";
+      period.setAttribute("aria-hidden", "true");
+      period.textContent = ".";
+      nameEl.appendChild(period);
+
       document.getElementById("product-tagline").textContent      = CONFIG.tagline;
-      document.getElementById("product-desc").textContent         = CONFIG.description;
 
       // ── Init fullPage.js ─────────────────────────────────────
       new fullpage("#fullpage", {
